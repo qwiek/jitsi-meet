@@ -10,7 +10,7 @@ export const SIDEBAR_AVATAR_SIZE = 100;
 
 const SIDEBAR_HEADER_HEIGHT = 150;
 
-export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
+export const SWITCH_THUMB_COLOR = ColorPalette.yellowHighlight;
 
 export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
@@ -25,20 +25,7 @@ const TEXT_COLOR = ColorPalette.white;
  */
 export default {
 
-    /**
-     * The audio-video switch itself.
-     */
-    audioVideoSwitch: {
-        marginHorizontal: 5
-    },
 
-    /**
-     * View that contains the audio-video switch and the labels.
-     */
-    audioVideoSwitchContainer: {
-        alignItems: 'center',
-        flexDirection: 'row'
-    },
 
     /**
      * View that is rendered when there is no welcome page.
@@ -84,16 +71,41 @@ export default {
     },
 
     enterRoomText: {
-        color: TEXT_COLOR,
+        color: ColorPalette.textColor,
         fontSize: 18,
-        marginBottom: BoxModel.margin
+        margin: 20,
+        textAlign: "center"
     },
+
+    cardTitleText: {
+        textAlign: "center",
+        fontFamily: "SourceSansPro-Light",
+        fontSize: 16,
+        color: ColorPalette.textColor
+    },
+
+    inputContainer: {
+        flex: 1,
+        flexDirection: "row"
+    },
+
+    joinButton: {
+        backgroundColor: ColorPalette.yellow,
+        height: 50,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        borderTopRightRadius: 4,
+        borderBottomRightRadius: 4,
+        marginRight: 30
+    },
+
 
     /**
      * The welcome screen header style.
      */
     header: {
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
 
     /**
@@ -188,8 +200,10 @@ export default {
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
-        alignSelf: 'stretch',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        flex: 1,
+        marginHorizontal: 20,
+        marginTop: 100
     },
 
     /**
@@ -262,15 +276,18 @@ export default {
      * Room input style.
      */
     textInput: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'white',
+        flex: 6,
         borderColor: ColorPalette.white,
-        borderRadius: 4,
+        borderRadius: 0,
+        borderTopLeftRadius: 4,
+        borderBottomLeftRadius: 4,
         borderWidth: 1,
-        color: TEXT_COLOR,
+        color: ColorPalette.textColor,
         fontSize: 23,
         height: 50,
         padding: 4,
-        textAlign: 'center'
+        marginLeft: 30
     },
 
     /**
@@ -304,7 +321,59 @@ export default {
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: ColorPalette.blue,
+        backgroundColor: ColorPalette.yellow,
         overflow: 'hidden'
-    }
+    },
+
+    cardStyle: {
+        flex: 4,
+        marginHorizontal: 20,
+        marginVertical: 40,
+    },
+
+    triangleCorner: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        width: 135,
+        height: 135,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid',
+        borderRightWidth: 130,
+        borderTopWidth: 130,
+        borderRightColor: 'transparent',
+        borderTopColor: ColorPalette.yellow,
+        transform: [
+            { rotate: '90deg' }
+        ]
+    },
+
+    navImage: {
+        position: "absolute",
+        top: "3.5%",
+        right: 0,
+    },
+
+    backgroundShade: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid',
+        borderRightWidth: 750,
+        borderTopWidth: 750,
+        borderRightColor: 'transparent',
+        borderTopColor: ColorPalette.darkBackground,
+        transform: [
+            { rotate: '90deg' }
+        ]
+    },
+
+    lightText: {
+        fontFamily: "SourceSansPro-Light"
+    },
+
+    boldText: {
+        fontFamily: "SourceSansPro-SemiBold"
+    },
 };

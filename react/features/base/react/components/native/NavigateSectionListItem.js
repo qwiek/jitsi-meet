@@ -6,7 +6,7 @@ import Swipeout from 'react-native-swipeout';
 import { ColorPalette } from '../../../styles';
 import type { Item } from '../../Types';
 
-import AvatarListItem from './AvatarListItem';
+import ListItem from './ListItem';
 import Container from './Container';
 import Text from './Text';
 import styles from './styles';
@@ -71,9 +71,9 @@ export default class NavigateSectionListItem extends Component<Props> {
 
         return (
             <Text
-                key = { index }
-                numberOfLines = { 1 }
-                style = { styles.listItemText }>
+                key={index}
+                numberOfLines={1}
+                style={styles.listItemText}>
                 {line}
             </Text>
         );
@@ -103,9 +103,9 @@ export default class NavigateSectionListItem extends Component<Props> {
 
         return (
             <Container
-                onClick = { secondaryAction }
-                style = { styles.secondaryActionContainer }>
-                <Text style = { styles.secondaryActionLabel }>+</Text>
+                onClick={secondaryAction}
+                style={styles.secondaryActionContainer}>
+                <Text style={styles.secondaryActionLabel}>+</Text>
             </Container>
         );
     }
@@ -137,15 +137,15 @@ export default class NavigateSectionListItem extends Component<Props> {
 
         return (
             <Swipeout
-                autoClose = { true }
-                backgroundColor = { ColorPalette.transparent }
-                right = { right }>
-                <AvatarListItem
-                    item = { item }
-                    onPress = { this.props.onPress } >
-                    { this.props.secondaryAction
-                            && this._renderSecondaryAction() }
-                </AvatarListItem>
+                autoClose={true}
+                backgroundColor={ColorPalette.transparent}
+                right={right}>
+                <ListItem
+                    item={item}
+                    onPress={this.props.onPress} >
+                    {this.props.secondaryAction
+                        && this._renderSecondaryAction()}
+                </ListItem>
             </Swipeout>
         );
     }

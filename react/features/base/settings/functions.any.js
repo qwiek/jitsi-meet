@@ -24,9 +24,9 @@ import { DEFAULT_SERVER_URL } from './constants';
  * @returns {any}
  */
 export function getPropertyValue(
-        stateful: Object | Function,
-        propertyName: string,
-        sources?: Object
+    stateful: Object | Function,
+    propertyName: string,
+    sources?: Object
 ) {
     // Default values don't play nicely with partial objects and we want to make
     // the function easy to use without exhaustively defining all flags:
@@ -97,7 +97,7 @@ export function getPropertyValue(
 export function getServerURL(stateful: Object | Function) {
     const state = toState(stateful);
 
-    return state['features/base/settings'].serverURL || DEFAULT_SERVER_URL;
+    return DEFAULT_SERVER_URL;
 }
 
 /**

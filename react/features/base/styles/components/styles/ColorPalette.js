@@ -31,6 +31,13 @@ export const ColorPalette = {
     warning: 'rgb(215, 121, 118)',
     white: '#FFFFFF',
 
+    // Qwiek
+    yellow: "#ffca33",
+    yellowHighlight: "#e6a800",
+    darkBackground: "#ebeae9",
+    lightBackground: "#f4f2f0",
+    textColor: "#999999",
+
     /**
      * These are colors from the atlaskit to be used on mobile, when needed.
      *

@@ -129,7 +129,9 @@ const SECTION_LIST_STYLES = {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        padding: 5
+        padding: 5,
+        borderColor: ColorPalette.lightGrey,
+        borderBottomWidth: 1
     },
 
     listItemDetails: {
@@ -140,13 +142,14 @@ const SECTION_LIST_STYLES = {
     },
 
     listItemText: {
-        color: OVERLAY_FONT_COLOR,
-        fontSize: 14
+        color: ColorPalette.textColor,
+        fontSize: 14,
+        fontFamily: "SourceSansPro-Light"
     },
 
     listItemTitle: {
-        fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 16,
+        fontFamily: "SourceSansPro-SemiBold"
     },
 
     listSection: {

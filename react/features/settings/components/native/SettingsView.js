@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
+import { Alert, NativeModules, View, Text, TextInput, TouchableOpacity, Image, Linking } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
@@ -14,8 +14,9 @@ import {
     type Props as AbstractProps
 } from '../AbstractSettingsView';
 
-import FormRow from './FormRow';
-import FormSectionHeader from './FormSectionHeader';
+import { ColorPalette } from "../../../base/styles";
+import styles from './styles';
+
 
 /**
  * Application information module.
@@ -125,12 +126,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         // Bind event handlers so they are only bound once per instance.
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
         this._onClose = this._onClose.bind(this);
-        this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
-        this._onDisableCrashReporting = this._onDisableCrashReporting.bind(this);
-        this._onDisableP2P = this._onDisableP2P.bind(this);
-        this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
+        this._openURL = this._openURL.bind(this);
     }
 
     /**
@@ -140,84 +138,73 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
+        const { displayName, email } = this.state;
 
         return (
             <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'settingsView.header'
-                }}
-                modalId = { SETTINGS_VIEW_ID }
-                onClose = { this._onClose }>
-                <ScrollView>
-                    <FormSectionHeader
-                        label = 'settingsView.profileSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.displayName'
-                        layout = 'column'>
-                        <TextInput
-                            autoCorrect = { false }
-                            onChangeText = { this._onChangeDisplayName }
-                            placeholder = 'John Doe'
-                            textContentType = { 'name' } // iOS only
-                            value = { displayName } />
-                    </FormRow>
-                    <FormRow
-                        label = 'settingsView.email'
-                        layout = 'column'>
-                        <TextInput
-                            autoCapitalize = 'none'
-                            autoCorrect = { false }
-                            keyboardType = { 'email-address' }
-                            onChangeText = { this._onChangeEmail }
-                            placeholder = 'email@example.com'
-                            textContentType = { 'emailAddress' } // iOS only
-                            value = { email } />
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.conferenceSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.serverURL'
-                        layout = 'column'>
-                        <TextInput
-                            autoCapitalize = 'none'
-                            autoCorrect = { false }
-                            editable = { this.props._serverURLChangeEnabled }
-                            keyboardType = { 'url' }
-                            onBlur = { this._onBlurServerURL }
-                            onChangeText = { this._onChangeServerURL }
-                            placeholder = { this.props._serverURL }
-                            textContentType = { 'URL' } // iOS only
-                            value = { serverURL } />
-                    </FormRow>
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.startWithAudioMuted'>
-                        <Switch
-                            onValueChange = { this._onStartAudioMutedChange }
-                            value = { startWithAudioMuted } />
-                    </FormRow>
-                    <FormRow label = 'settingsView.startWithVideoMuted'>
-                        <Switch
-                            onValueChange = { this._onStartVideoMutedChange }
-                            value = { startWithVideoMuted } />
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.buildInfoSection' />
-                    <FormRow
-                        label = 'settingsView.version'>
-                        <Text>
-                            {`${AppInfo.version} build ${AppInfo.buildNumber}`}
-                        </Text>
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.advanced' />
-                    {this._renderAdvancedSettings()}
-                </ScrollView>
+                modalId={SETTINGS_VIEW_ID}
+                onClose={this._onClose}
+                style={{ backgroundColor: ColorPalette.yellow }}>
+                <View style={styles.container}>
+                    <View style={styles.imageView}>
+                        <Image style={{ width: 30, height: 30 }} source={require("../../../base/icons/png/home.png")} />
+                    </View>
+                    <View style={styles.actionContainer}>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Naam</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                aautoCorrect={false}
+                                onChangeText={this._onChangeDisplayName}
+                                textContentType={'name'} // iOS only
+                                value={displayName} />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Email</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                autoCapitalize='none'
+                                autoCorrect={false}
+                                keyboardType={'email-address'}
+                                onChangeText={this._onChangeEmail}
+                                textContentType={'emailAddress'} // iOS only
+                                value={email} />
+                        </View>
+                    </View>
+                    <View style={styles.footer}>
+                        <Text style={styles.lightText}>Software versie: v2020.09.1</Text>
+                        <View style={styles.footerActions}>
+                            <TouchableOpacity onPress={() => this._openURL("https://google.nl")}>
+                                <Text style={styles.boldText}>Privacy </Text>
+                            </TouchableOpacity>
+                            <Text style={styles.boldText}> | </Text>
+                            <TouchableOpacity onPress={() => this._openURL("https://qwiek.eu")}>
+                                <Text style={styles.boldText}> Voorwaarden</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
             </JitsiModal>
         );
+    }
+
+    _openURL: () => void;
+
+    /**
+     * Handler the privacy clicked event
+     *
+     * @private
+     * @param {string} url - The url that should be opened
+     * @returns {void}
+     */
+    _openURL(url) {
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                console.log("Don't know how to open URI: " + url);
+            }
+        });
     }
 
     _onBlurServerURL: () => void;
@@ -272,62 +259,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         });
     }
 
-    _onDisableCallIntegration: (boolean) => void;
-
-    /**
-     * Handles the disable call integration change event.
-     *
-     * @param {boolean} disableCallIntegration - The new value
-     * option.
-     * @private
-     * @returns {void}
-     */
-    _onDisableCallIntegration(disableCallIntegration) {
-        this._updateSettings({
-            disableCallIntegration
-        });
-        this.setState({
-            disableCallIntegration
-        });
-    }
-
-    _onDisableP2P: (boolean) => void;
-
-    /**
-     * Handles the disable P2P change event.
-     *
-     * @param {boolean} disableP2P - The new value
-     * option.
-     * @private
-     * @returns {void}
-     */
-    _onDisableP2P(disableP2P) {
-        this._updateSettings({
-            disableP2P
-        });
-        this.setState({
-            disableP2P
-        });
-    }
-
-    _onDisableCrashReporting: (boolean) => void;
-
-    /**
-     * Handles the disable crash reporting change event.
-     *
-     * @param {boolean} disableCrashReporting - The new value
-     * option.
-     * @private
-     * @returns {void}
-     */
-    _onDisableCrashReporting(disableCrashReporting) {
-        if (disableCrashReporting) {
-            this._showCrashReportingDisableAlert();
-        } else {
-            this._disableCrashReporting(disableCrashReporting);
-        }
-    }
-
     _onClose: () => void;
 
     /**
@@ -340,43 +271,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this.setState({ showAdvanced: false });
 
         return this._processServerURL(true /* hideOnSuccess */);
-    }
-
-    _onShowAdvanced: () => void;
-
-    /**
-     * Handles the advanced settings button.
-     *
-     * @returns {void}
-     */
-    _onShowAdvanced() {
-        this.setState({ showAdvanced: !this.state.showAdvanced });
-    }
-
-    /**
-     * Callback to update the start with audio muted value.
-     *
-     * @param {boolean} startWithAudioMuted - The new value to set.
-     * @returns {void}
-     */
-    _onStartAudioMutedChange(startWithAudioMuted) {
-        super._onStartAudioMutedChange(startWithAudioMuted);
-        this.setState({
-            startWithAudioMuted
-        });
-    }
-
-    /**
-     * Callback to update the start with video muted value.
-     *
-     * @param {boolean} startWithVideoMuted - The new value to set.
-     * @returns {void}
-     */
-    _onStartVideoMutedChange(startWithVideoMuted) {
-        super._onStartVideoMutedChange(startWithVideoMuted);
-        this.setState({
-            startWithVideoMuted
-        });
     }
 
     /**
@@ -401,56 +295,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onChangeServerURL(normalizedURL);
 
         return hideOnSuccess;
-    }
-
-    /**
-     * Renders the advanced settings options.
-     *
-     * @private
-     * @returns {React$Element}
-     */
-    _renderAdvancedSettings() {
-        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
-
-        if (!showAdvanced) {
-            return (
-                <FormRow
-                    fieldSeparator = { true }
-                    label = 'settingsView.showAdvanced'>
-                    <Switch
-                        onValueChange = { this._onShowAdvanced }
-                        value = { showAdvanced } />
-                </FormRow>
-            );
-        }
-
-        return (
-            <>
-                <FormRow
-                    fieldSeparator = { true }
-                    label = 'settingsView.disableCallIntegration'>
-                    <Switch
-                        onValueChange = { this._onDisableCallIntegration }
-                        value = { disableCallIntegration } />
-                </FormRow>
-                <FormRow
-                    fieldSeparator = { true }
-                    label = 'settingsView.disableP2P'>
-                    <Switch
-                        onValueChange = { this._onDisableP2P }
-                        value = { disableP2P } />
-                </FormRow>
-                {AppInfo.GOOGLE_SERVICES_ENABLED && (
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.disableCrashReporting'>
-                        <Switch
-                            onValueChange = { this._onDisableCrashReporting }
-                            value = { disableCrashReporting } />
-                    </FormRow>
-                )}
-            </>
-        );
     }
 
     _setURLFieldReference: (React$ElementRef<*> | null) => void;
@@ -488,29 +332,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         );
     }
 
-    /**
-     * Shows an alert warning the user about disabling crash reporting.
-     *
-     * @returns {void}
-     */
-    _showCrashReportingDisableAlert() {
-        const { t } = this.props;
-
-        Alert.alert(
-            t('settingsView.alertTitle'),
-            t('settingsView.disableCrashReportingWarning'),
-            [
-                {
-                    onPress: () => this._disableCrashReporting(true),
-                    text: t('settingsView.alertOk')
-                },
-                {
-                    text: t('settingsView.alertCancel')
-                }
-            ]
-        );
-    }
-
     _updateSettings: (Object) => void;
 
     /**
@@ -537,5 +358,6 @@ function _mapStateToProps(state) {
         _serverURLChangeEnabled: isServerURLChangeEnabled(state)
     };
 }
+
 
 export default translate(connect(_mapStateToProps)(SettingsView));

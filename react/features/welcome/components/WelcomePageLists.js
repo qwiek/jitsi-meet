@@ -89,10 +89,11 @@ class WelcomePageLists extends Component<Props> {
 
         return (
             <PagedList
-                defaultPage = { _defaultPage }
-                disabled = { this.props.disabled }
-                onSelectPage = { this._onSelectPage }
-                pages = { pages } />
+                defaultPage={_defaultPage}
+                disabled={this.props.disabled}
+                onSelectPage={this._onSelectPage}
+                pages={pages} />
+
         );
     }
 
@@ -122,17 +123,8 @@ class WelcomePageLists extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state: Object) {
-    let { defaultPage } = state['features/welcome'];
-
-    if (typeof defaultPage === 'undefined') {
-        const recentList = state['features/recent-list'];
-
-        defaultPage = recentList && recentList.length ? 0 : 1;
-    }
-
     return {
-        _calendarEnabled: isCalendarEnabled(state),
-        _defaultPage: defaultPage
+        _defaultPage: 0
     };
 }
 

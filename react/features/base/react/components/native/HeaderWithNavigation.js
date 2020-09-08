@@ -8,6 +8,7 @@ import BackButton from './BackButton';
 import ForwardButton from './ForwardButton';
 import Header from './Header';
 import HeaderLabel from './HeaderLabel';
+import { ColorPalette } from '../../../styles';
 
 
 type Props = {
@@ -51,13 +52,13 @@ class HeaderWithNavigation extends Component<Props> {
         const { onPressBack, onPressForward } = this.props;
 
         return (
-            <Header>
-                { onPressBack && <BackButton onPress = { onPressBack } /> }
-                <HeaderLabel labelKey = { this.props.headerLabelKey } />
-                { onPressForward && <ForwardButton
-                    disabled = { this.props.forwardDisabled }
-                    labelKey = { this.props.forwardLabelKey }
-                    onPress = { onPressForward } /> }
+            <Header style={{ backgroundColor: ColorPalette.yellow }}>
+                {onPressBack && <BackButton onPress={onPressBack} />}
+                <HeaderLabel labelKey={this.props.headerLabelKey} />
+                {onPressForward && <ForwardButton
+                    disabled={this.props.forwardDisabled}
+                    labelKey={this.props.forwardLabelKey}
+                    onPress={onPressForward} />}
             </Header>
         );
     }

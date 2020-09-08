@@ -6,35 +6,36 @@ import {
     TextInput,
     TouchableHighlight,
     TouchableOpacity,
-    View
+    View,
+    Image,
 } from 'react-native';
 
 import { getName } from '../../app/functions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
-import { Icon, IconMenu, IconWarning } from '../../base/icons';
+import { Icon, IconMenu } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
-import { Header, LoadingIndicator, Text } from '../../base/react';
+import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
     destroyLocalTracks
 } from '../../base/tracks';
-import { HelpView } from '../../help';
-import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 import { setSideBarVisible } from '../actions';
+
+import { setActiveModalId } from '../../base/modal';
+import { SETTINGS_VIEW_ID } from '../../settings';
 
 import {
     AbstractWelcomePage,
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
-import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
-import WelcomePageSideBar from './WelcomePageSideBar';
-import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
+import styles from './styles';
+import Card from './Card';
+
 
 /**
  * The native container rendering the welcome page.
@@ -56,11 +57,12 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
-        this._renderHintBox = this._renderHintBox.bind(this);
 
         // Specially bind functions to avoid function definition on render.
         this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
+
+        this._onOpenSettings = this._onOpenSettings.bind(this);
     }
 
     /**
@@ -118,44 +120,6 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Renders the insecure room name warning.
-     *
-     * @inheritdoc
-     */
-    _doRenderInsecureRoomNameWarning() {
-        return (
-            <View
-                style = { [
-                    styles.messageContainer,
-                    styles.insecureRoomNameWarningContainer
-                ] }>
-                <Icon
-                    src = { IconWarning }
-                    style = { styles.insecureRoomNameWarningIcon } />
-                <Text style = { styles.insecureRoomNameWarningText }>
-                    { this.props.t('security.insecureRoomNameWarning') }
-                </Text>
-            </View>
-        );
-    }
-
-    /**
-     * Constructs a style array to handle the hint box animation.
-     *
-     * @private
-     * @returns {Array<Object>}
-     */
-    _getHintBoxStyle() {
-        return [
-            styles.messageContainer,
-            styles.hintContainer,
-            {
-                opacity: this.state.hintBoxAnimation
-            }
-        ];
-    }
-
-    /**
      * Callback for when the room field's focus changes so the hint box
      * must be rendered or removed.
      *
@@ -177,10 +141,10 @@ class WelcomePage extends AbstractWelcomePage {
             })
             .start(animationState =>
                 animationState.finished
-                    && !focused
-                    && this.setState({
-                        _fieldFocused: false
-                    }));
+                && !focused
+                && this.setState({
+                    _fieldFocused: false
+                }));
     }
 
     /**
@@ -192,33 +156,6 @@ class WelcomePage extends AbstractWelcomePage {
     _onShowSideBar() {
         Keyboard.dismiss();
         this.props.dispatch(setSideBarVisible(true));
-    }
-
-    /**
-     * Renders the hint box if necessary.
-     *
-     * @private
-     * @returns {React$Node}
-     */
-    _renderHintBox() {
-        if (this.state._fieldFocused) {
-            const { t } = this.props;
-
-            return (
-                <Animated.View style = { this._getHintBoxStyle() }>
-                    <View style = { styles.hintTextContainer } >
-                        <Text style = { styles.hintText }>
-                            { t('welcomepage.roomnameHint') }
-                        </Text>
-                    </View>
-                    <View style = { styles.hintButtonContainer } >
-                        { this._renderJoinButton() }
-                    </View>
-                </Animated.View>
-            );
-        }
-
-        return null;
     }
 
     /**
@@ -239,28 +176,43 @@ class WelcomePage extends AbstractWelcomePage {
             children = (
                 <View>
                     <LoadingIndicator
-                        color = { styles.buttonText.color }
-                        size = 'small' />
+                        color={styles.buttonText.color}
+                        size='small' />
                 </View>
             );
         } else {
             children = (
-                <Text style = { styles.buttonText }>
-                    { this.props.t('welcomepage.join') }
+                <Text style={styles.buttonText}>
+                    {this.props.t('welcomepage.join')}
                 </Text>
             );
         }
 
         return (
             <TouchableHighlight
-                accessibilityLabel =
-                    { t('welcomepage.accessibilityLabel.join') }
-                onPress = { this._onJoin }
-                style = { styles.button }
-                underlayColor = { ColorPalette.white }>
-                { children }
+                accessibilityLabel=
+                {t('welcomepage.accessibilityLabel.join')}
+                onPress={this._onJoin}
+                style={styles.button}
+                underlayColor={ColorPalette.white}>
+                {children}
             </TouchableHighlight>
         );
+    }
+
+    _onOpenSettings: () => void;
+
+    /**
+     * Shows the {@link SettingsView}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenSettings() {
+        const { dispatch } = this.props;
+
+        dispatch(setSideBarVisible(false));
+        dispatch(setActiveModalId(SETTINGS_VIEW_ID));
     }
 
     /**
@@ -269,54 +221,55 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderFullUI() {
-        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
         const { _headerStyles, t } = this.props;
 
         return (
-            <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { _headerStyles.page }>
-                    <Header style = { styles.header }>
-                        <TouchableOpacity onPress = { this._onShowSideBar } >
-                            <Icon
-                                src = { IconMenu }
-                                style = { _headerStyles.headerButtonIcon } />
-                        </TouchableOpacity>
-                        <VideoSwitch />
-                    </Header>
-                    <SafeAreaView style = { styles.roomContainer } >
-                        <View style = { styles.joinControls } >
-                            <Text style = { styles.enterRoomText }>
-                                { t('welcomepage.roomname') }
-                            </Text>
+            <View style={{ flex: 1, top: 0, right: 0, backgroundColor: ColorPalette.lightBackground }}>
+                <View style={styles.backgroundShade}></View>
+                <View style={_headerStyles.page}>
+                    <TouchableOpacity style={styles.triangleCorner} onPress={this._onOpenSettings}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.navImage} onPress={this._onOpenSettings}>
+                        <Icon
+                            src={IconMenu}
+                            style={[{ ..._headerStyles.headerButtonIcon }, { ...styles.navImage }]} />
+                    </TouchableOpacity>
+                    <SafeAreaView style={styles.roomContainer} >
+                        <Text style={styles.enterRoomText}>
+                            <Text style={styles.lightText}>Voer het </Text>
+                            <Text style={styles.boldText}>serienummer </Text>
+                            <Text style={styles.lightText}>van de </Text>
+                            <Text style={styles.boldText}>Qwiek.Up </Text>
+                            <Text style={styles.lightText}>in om mee te verbinden</Text>
+                        </Text>
+
+                        <View style={styles.inputContainer}>
                             <TextInput
-                                accessibilityLabel = { t(roomnameAccLabel) }
-                                autoCapitalize = 'none'
-                                autoComplete = 'off'
-                                autoCorrect = { false }
-                                autoFocus = { false }
-                                onBlur = { this._onFieldBlur }
-                                onChangeText = { this._onRoomChange }
-                                onFocus = { this._onFieldFocus }
-                                onSubmitEditing = { this._onJoin }
-                                placeholder = { this.state.roomPlaceholder }
-                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                                returnKeyType = { 'go' }
-                                style = { styles.textInput }
-                                underlineColorAndroid = 'transparent'
-                                value = { this.state.room } />
-                            {
-                                this._renderInsecureRoomNameWarning()
-                            }
-                            {
-                                this._renderHintBox()
-                            }
+                                autoCapitalize='none'
+                                autoComplete='off'
+                                autoCorrect={false}
+                                autoFocus={false}
+                                onBlur={this._onFieldBlur}
+                                onChangeText={this._onRoomChange}
+                                onFocus={this._onFieldFocus}
+                                onSubmitEditing={this._onJoin}
+                                placeholderTextColor={ColorPalette.textColor}
+                                returnKeyType={'go'}
+                                style={styles.textInput}
+                                underlineColorAndroid='transparent'
+                                value={this.state.room} />
+                            <TouchableOpacity style={styles.joinButton} onPress={this._onJoin}>
+                                <Image style={{ width: 30, height: 30 }} source={require("../../base/icons/png/arrow_right.png")} />
+                            </TouchableOpacity>
                         </View>
+                        <Card style={styles.cardStyle}>
+                            <Text style={styles.cardTitleText}>Verbinding Geschiedenis</Text>
+                            <WelcomePageLists disabled={this.state._fieldFocused} />
+                        </Card>
                     </SafeAreaView>
-                    <WelcomePageLists disabled = { this.state._fieldFocused } />
                 </View>
-                <WelcomePageSideBar />
-                { this._renderWelcomePageModals() }
-            </LocalVideoTrackUnderlay>
+                {this._renderWelcomePageModals()}
+            </View>
         );
     }
 
@@ -329,9 +282,9 @@ class WelcomePage extends AbstractWelcomePage {
         const { t } = this.props;
 
         return (
-            <View style = { styles.reducedUIContainer }>
-                <Text style = { styles.reducedUIText }>
-                    { t('welcomepage.reducedUIText', { app: getName() }) }
+            <View style={styles.reducedUIContainer}>
+                <Text style={styles.reducedUIText}>
+                    {t('welcomepage.reducedUIText', { app: getName() })}
                 </Text>
             </View>
         );
@@ -344,9 +297,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _renderWelcomePageModals() {
         return [
-            <HelpView key = 'helpView' />,
-            <DialInSummary key = 'dialInSummary' />,
-            <SettingsView key = 'settings' />
+            <SettingsView key='settings' />
         ];
     }
 }

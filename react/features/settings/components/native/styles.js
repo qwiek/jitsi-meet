@@ -104,5 +104,77 @@ export default {
         marginVertical: 5,
         paddingVertical: 3,
         textAlign: 'left'
-    }
+    },
+
+    container: {
+        flex: 1,
+        flexDirection: "column",
+        backgroundColor: ColorPalette.yellow
+    },
+
+    header: {
+        flex: 1,
+        margin: 20,
+    },
+
+    closeButton: {
+        justifyContent: "flex-start",
+        alignItems: "flex-end",
+    },
+
+    actionContainer: {
+        flex: 5,
+        justifyContent: "flex-start",
+        alignItems: "center",
+    },
+
+    footer: {
+        flex: 1,
+        alignItems: "center"
+    },
+
+    footerActions: {
+        flexDirection: "row",
+    },
+
+    inputContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        width: "100%",
+        marginVertical: 20
+    },
+
+    inputLabel: {
+        width: "70%",
+        fontFamily: "SourceSansPro-SemiBold"
+
+    },
+
+    textInput: {
+        backgroundColor: 'white',
+        borderColor: ColorPalette.white,
+        borderRadius: 4,
+        borderWidth: 1,
+        color: ColorPalette.textColor,
+        fontSize: 23,
+        height: 50,
+        width: "70%",
+        padding: 4,
+        textAlign: 'center'
+    },
+
+    imageView: {
+        flex: 3,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    lightText: {
+        fontFamily: "SourceSansPro-Light"
+    },
+
+    boldText: {
+        fontFamily: "SourceSansPro-SemiBold"
+    },
 };

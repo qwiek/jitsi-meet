@@ -33,9 +33,9 @@ export default {
         buttonLabel: ColorPalette.white
     },
     'Header': {
-        background: ColorPalette.blue,
+        background: ColorPalette.yellow,
         icon: ColorPalette.white,
-        statusBar: ColorPalette.blueHighlight,
+        statusBar: ColorPalette.yellowHighlight,
         statusBarContent: ColorPalette.white,
         text: ColorPalette.white
     },
