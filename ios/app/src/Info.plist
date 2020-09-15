@@ -74,6 +74,11 @@
 	<array>
 		<string>org.jitsi.JitsiMeet.ios.conference</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SourceSansPro-Light.ttf</string>
+		<string>SourceSansPro-SemiBold.ttf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -101,10 +106,5 @@
 	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>SourceSansPro-Light.ttf</string>
-		<string>SourceSansPro-SemiBold.ttf</string>
-	</array>
 </dict>
 </plist>
